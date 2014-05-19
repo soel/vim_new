@@ -137,110 +137,20 @@ set history=10000
 set ttymouse=xterm2
 " コマンドを画面最下部に表示する
 set showcmd
- 
- 
-" w!! でスーパーユーザーとして保存（sudoが使える環境限定）
-cmap w!! w !sudo tee > /dev/null %
-" 入力モード中に素早くJJと入力した場合はESCとみなす
-inoremap jj <Esc>
-" ESCを二回押すことでハイライトを消す
-nmap <silent> <Esc><Esc> :nohlsearch<CR>
-" カーソル下の単語を * で検索
-vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v, '\/'), "\n", '\\n', 'g')<CR><CR>
-" 検索後にジャンプした際に検索単語を画面中央に持ってくる
-nnoremap n nzz
-nnoremap N Nzz
-nnoremap * *zz
-nnoremap # #zz
-nnoremap g* g*zz
-nnoremap g# g#zz
-" j, k による移動を折り返されたテキストでも自然に振る舞うように変更
-nnoremap j gj
-nnoremap k gk
-" vを二回で行末まで選択
-vnoremap v $h
-" TABにて対応ペアにジャンプ
-nnoremap &lt;Tab&gt; %
-vnoremap &lt;Tab&gt; %
+
 " Ctrl + hjkl でウィンドウ間を移動
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-" Shift + 矢印でウィンドウサイズを変更
-nnoremap <S-Left>  <C-w><<CR>
-nnoremap <S-Right> <C-w><CR>
-nnoremap <S-Up>    <C-w>-<CR>
-nnoremap <S-Down>  <C-w>+<CR>
-" T + ? で各種設定をトグル
-nnoremap [toggle] <Nop>
-nmap T [toggle]
-nnoremap <silent> [toggle]s :setl spell!<CR>:setl spell?<CR>
-nnoremap <silent> [toggle]l :setl list!<CR>:setl list?<CR>
-nnoremap <silent> [toggle]t :setl expandtab!<CR>:setl expandtab?<CR>
-nnoremap <silent> [toggle]w :setl wrap!<CR>:setl wrap?<CR>
  
-" :e などでファイルを開く際にフォルダが存在しない場合は自動作成
-function! s:mkdir(dir, force)
-  if !isdirectory(a:dir) && (a:force ||
-        \ input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
-    call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-  endif
-endfunction
- 
-" vim 起動時のみカレントディレクトリを開いたファイルの親ディレクトリに指定 
-function! s:ChangeCurrentDir(directory, bang)
-    if a:directory == ''
-        lcd %:p:h
-    else
-        execute 'lcd' . a:directory
-    endif
- 
-    if a:bang == ''
-        pwd
-    endif
-endfunction
- 
-" ~/.vimrc.localが存在する場合のみ設定を読み込む
-let s:local_vimrc = expand('~/.vimrc.local')
-if filereadable(s:local_vimrc)
-    execute 'source ' . s:local_vimrc
-endif
- 
-" /{pattern}の入力中は「/」をタイプすると自動で「\/」が、
-" ?{pattern}の入力中は「?」をタイプすると自動で「\?」が 入力されるようになる
-cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
-cnoremap <expr> ? getcmdtype() == '?' ? '\?' : '?'
-if has('unnamedplus')
-    set clipboard& clipboard+=unnamedplus
-else
-    set clipboard& clipboard+=unnamed,autoselect
-endif
- 
-"表示行単位で行移動する
-nnoremap <silent> j gj
-nnoremap <silent> k gk
-"インサートモードでも移動
-inoremap <c-d> <delete>
-inoremap <c-j> <down>
-inoremap <c-k> <up>
-inoremap <c-h> <left>
-inoremap <c-l> <right>
-"画面切り替え
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-l> <c-w>l
-nnoremap <c-h> <c-w>h
-"<space>j, <space>kで画面送り
-noremap [Prefix]j <c-f><cr><cr>
-noremap [Prefix]k <c-b><cr><cr>
  
 " PHP用設定
 " PHP辞書ファイル指定
 autocmd FileType php,ctp :set dictionary=~/.vim/dict/php.dict
 " :makeでPHP構文チェック
-au FileType php setlocal makeprg=php\ -l\ %
-au FileType php setlocal errorformat=%m\ in\ %f\ on\ line\ %l
+"au FileType php setlocal makeprg=php\ -l\ %
+"au FileType php setlocal errorformat=%m\ in\ %f\ on\ line\ %l
 " PHPの関数やクラスの折りたたみ
 let php_folding = 0
 " 文字列の中のSQLをハイライト
@@ -338,8 +248,8 @@ command! Sqlfromj :call SQLFromJava()
  
 " Ruby用設定
 " :makeでRuby構文チェック
-au FileType ruby setlocal makeprg=ruby\ -c\ %
-au FileType ruby setlocal errorformat=%m\ in\ %f\ on\ line\ %l
+"au FileType ruby setlocal makeprg=ruby\ -c\ %
+"au FileType ruby setlocal errorformat=%m\ in\ %f\ on\ line\ %l
  
 " Scala用設定
 " ファイルタイプの追加
@@ -347,7 +257,7 @@ augroup filetypedetect
 autocmd! BufNewFile,BufRead *.scala setfiletype scala
 autocmd! BufNewFile,BufRead *.sbt setfiletype scala
 augroup END
-autocmd BufWritePost *.php silent make | if len(getqflist()) != 1 | copen | else | cclose | endif
+"autocmd BufWritePost *.php silent make | if len(getqflist()) != 1 | copen | else | cclose | endif
  
 " 行末、行の最初への移動のキーマップ設定
 :map! <C-e> <Esc>$a
@@ -382,3 +292,5 @@ set t_Co=256
 colorscheme zenburn
 
 inoremap  
+
+set syntax=htmldjango
